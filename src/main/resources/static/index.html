@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Task Manager - Organize your tasks efficiently with calendar view, date tracking and completion status">
+    <title>Task Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">✦</span>
+                    <h1>Task Manager</h1>
+                </div>
+                <p class="header-subtitle">Organize. Track. Accomplish.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <!-- Stats Bar -->
+        <section class="stats-bar" id="stats-bar">
+            <div class="stat-card">
+                <span class="stat-number" id="stat-total">0</span>
+                <span class="stat-label">Total Tasks</span>
+            </div>
+            <div class="stat-card stat-completed">
+                <span class="stat-number" id="stat-completed">0</span>
+                <span class="stat-label">Completed</span>
+            </div>
+            <div class="stat-card stat-pending">
+                <span class="stat-number" id="stat-pending">0</span>
+                <span class="stat-label">Pending</span>
+            </div>
+        </section>
+
+        <!-- Calendar Section -->
+        <section class="calendar-section" id="calendar-section">
+            <div class="calendar-container">
+                <!-- Calendar Widget -->
+                <div class="calendar-widget">
+                    <div class="calendar-header-bar">
+                        <button class="calendar-nav-btn" id="cal-prev" title="Previous month">‹</button>
+                        <h3 class="calendar-month-title" id="cal-month-title">April 2026</h3>
+                        <button class="calendar-nav-btn" id="cal-next" title="Next month">›</button>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div class="calendar-grid" id="cal-grid">
+                        <!-- Days rendered by JS -->
+                    </div>
+                    <div class="calendar-legend">
+                        <span class="legend-item"><span class="legend-dot legend-dot-pending"></span> Has pending</span>
+                        <span class="legend-item"><span class="legend-dot legend-dot-completed"></span> All done</span>
+                        <span class="legend-item"><span class="legend-dot legend-dot-today"></span> Today</span>
+                    </div>
+                </div>
+
+                <!-- Day Tasks Panel -->
+                <div class="day-tasks-panel" id="day-tasks-panel">
+                    <div class="day-tasks-placeholder" id="day-tasks-placeholder">
+                        <div class="placeholder-icon">📅</div>
+                        <h4>Select a date</h4>
+                        <p>Click on any date in the calendar to view tasks</p>
+                    </div>
+                    <div class="day-tasks-content" id="day-tasks-content" style="display:none;">
+                        <div class="day-tasks-header">
+                            <h3 id="day-tasks-title">Tasks for April 21</h3>
+                            <span class="day-tasks-count" id="day-tasks-count">0 tasks</span>
+                        </div>
+                        <div class="day-tasks-list" id="day-tasks-list">
+                            <!-- Task items rendered by JS -->
+                        </div>
+                        <div class="day-tasks-empty" id="day-tasks-empty" style="display:none;">
+                            <span class="day-empty-icon">🎉</span>
+                            <p>No tasks on this day</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls -->
+        <section class="controls">
+            <div class="filter-tabs">
+                <button class="filter-btn active" data-filter="all" id="filter-all">All</button>
+                <button class="filter-btn" data-filter="pending" id="filter-pending">Pending</button>
+                <button class="filter-btn" data-filter="completed" id="filter-completed">Completed</button>
+            </div>
+            <button class="btn btn-primary" id="btn-add-task" onclick="openModal()">
+                <span class="btn-icon">+</span> New Task
+            </button>
+        </section>
+
+        <!-- Task List -->
+        <section class="task-list" id="task-list">
+            <!-- Tasks will be rendered here by JS -->
+        </section>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <div class="empty-icon">📋</div>
+            <h3>No tasks yet</h3>
+            <p>Click "New Task" to get started!</p>
+        </div>
+
+    </main>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Task</h2>
+                <button class="modal-close" id="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="task-form" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="task-id">
+
+                <div class="form-group">
+                    <label for="task-title">Task Title</label>
+                    <input type="text" id="task-title" name="title" placeholder="Enter task title..." required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="task-date">Date</label>
+                        <input type="date" id="task-date" name="taskDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-time">Time</label>
+                        <input type="time" id="task-time" name="taskTime">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="task-month-display">Month</label>
+                    <input type="text" id="task-month-display" readonly placeholder="Auto-filled from date"
+                           class="input-readonly">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit">
+                        <span class="btn-icon">✓</span> Save Task
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div class="modal-overlay" id="task-detail-overlay" onclick="closeTaskDetail(event)">
+        <div class="modal task-detail-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="detail-modal-title">Task Details</h2>
+                <button class="modal-close" onclick="closeTaskDetail()">&times;</button>
+            </div>
+            <div class="task-detail-body" id="task-detail-body">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toast-icon">✓</span>
+        <span class="toast-message" id="toast-message">Task saved!</span>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
